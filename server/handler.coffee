@@ -19,7 +19,7 @@ AWS = require "aws-sdk"
 AWS.config.update
 	region: config.awsRegion
 
-sendTxt = (message, context, callback) ->
+sendTxt = (message, context, done) ->
 	# Message max length is 140 characters
 	message = message.substring 0, 140
 	new AWS.SNS().publish
@@ -28,19 +28,33 @@ sendTxt = (message, context, callback) ->
 		, (err)->
 			if err?
 				errMsg = "Unable to send SMS"
-				console.log errMsg
-				return callback err, errMsg
-			return callback null, "Message sent"
+				console.log err
+				return done null, createResponse 500, errMsg
+			return done null, createResponse 200, "Message sent"
 
-exports.handler = (event, context, callback)->
-	if !event?.message
+createResponse = (code, message)->
+	return
+		statusCode: code
+		headers:
+			"Access-Control-Allow-Origin": "*"
+			"Access-Control-*": "*"
+		body: JSON.stringify
+			message: message
+
+exports.handler = (event, context, done)->
+	if event?.body?
+		message = JSON.parse event.body
+			.message
+	else
+		message = event?.message
+	if !message
 		# No message, fail
 		errMsg = "No message supplied"
 		console.log errMsg
-		return callback errMsg, errMsg
+		return done null, createResponse 400, errMsg
 	if !config.rateLimit?.enabled
 		# No rate limit, just send
-		return sendTxt event.message, context, callback
+		return sendTxt message, context, done
 
 	# Rate limit check
 	s3 = new AWS.S3();
@@ -52,7 +66,8 @@ exports.handler = (event, context, callback)->
 			if err?
 				errMsg = "Unable to access rate limit information"
 				console.log errMsg
-				return callback err, errMsg
+				console.log err
+				return done null, createResponse 500, errMsg
 			vals = data.Body?.toString().split ":"
 			curMonth = "#{new Date().getMonth()}"
 			if vals?.length > 1
@@ -73,7 +88,7 @@ exports.handler = (event, context, callback)->
 				# Rate limit exceeded
 				errMsg = "Rate limit of #{config.rateLimit.perMonth} reached"
 				console.log errMsg
-				return callback errMsg, errMsg
+				return done null, createResponse 429, errMsg
 
 			count++
 
@@ -85,5 +100,6 @@ exports.handler = (event, context, callback)->
 					if err?
 						errMsg = "Unable to update rate limit information"
 						console.log errMsg
-						return callback err, errMsg
-					return sendTxt event.message, context, callback
+						console.log err
+						return done null, createResponse 500, errMsg
+					return sendTxt message, context, done
