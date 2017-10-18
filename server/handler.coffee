@@ -20,7 +20,8 @@ AWS.config.update
 	region: config.awsRegion
 
 sendTxt = (message, context, callback) ->
-	params =
+	# Message max length is 140 characters
+	message = message.substring 0, 140
 	new AWS.SNS().publish
 			Message: message
 			PhoneNumber: config.phoneNumber
