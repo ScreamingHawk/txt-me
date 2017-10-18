@@ -1,0 +1,14 @@
+{
+  "name": "txt-me",
+  "version": "1.0.0",
+  "description": "A simple service that sends a txt to a single number",
+  "main": "server/handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Standen <michael@standen.link>",
+  "license": "MIT",
+  "devDependencies": {
+    "coffeescript": "^2.0.1"
+  }
+}
