@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Example Txt Me Usage</title>
+	<meta name="description" content="An example page showing how to use the txt-me client code">
+	<meta name="author" content="Michael Standen">
+
+	<style>
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			margin: auto;
+			height: 100vh;
+		}
+		.wrap {
+			width: 100%;
+			max-width: 920px;
+		}
+		.tobottom {
+			margin-top: auto;
+		}
+		.hidden {
+			visibility: hidden;
+		}
+
+	</style>
+</head>
+
+<body>
+
+	<div class="wrap">
+		<h1>Txt Me</h1>
+		<h3>Send a txt message to the owner</h3>
+		<form id="txtForm">
+			<input id="message" name="message" required="true" placeholder="Hi there friend!" maxlength="140">
+			<button id="sendButton" type="submit">Send Message!</button>
+		</form>
+		<p id="note"></p>
+	</div>
+
+	<footer class="tobottom">
+		<p>
+			By <a href="https://michael.standen.link">Michael Standen</a>
+		</p>
+	</footer>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>
+		window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
+	</script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.2.19.min.js"></script>
+	<script src="js/txt_me.js"></script>
+</body>
+
+</html>
